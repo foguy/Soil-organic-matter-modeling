@@ -1,8 +1,10 @@
 import re
 from typing import List, Tuple, Optional
-
-import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
 import pandas as pd
+import numpy as np
+
 from sklearn.preprocessing import FunctionTransformer, quantile_transform
 
 
@@ -103,3 +105,32 @@ def select_columns(cols: List[str]) -> FunctionTransformer:
     return FunctionTransformer(lambda X: X[cols], validate=False)
 
 
+    
+def plot_feature_importance (model, data : pd.DataFrame, top_n: int = 10, show: bool = True):
+    """
+    Plots the feature importance of a model.
+
+    Args:
+        model: The trained model with feature importances attribute.
+        data : pandas DataFrame containing the features.
+        top_n (int): Number of top features to display.
+        show (bool): Whether to display plot (useful in notebook)
+    """
+    if hasattr(model, 'feature_importances_') is False:
+        raise ValueError("Model does not have feature importances attribute.")
+    
+    importances = model.feature_importances_
+    indices = np.argsort(importances)[::-1][:top_n]
+    feature_names = data.columns.to_numpy()
+
+    plt.figure(figsize=(12, 6))
+    sns.barplot(x=importances[indices], y=feature_names[indices])
+    plt.title(f'Top {top_n} Feature Importances')
+    plt.xlabel('Importance score')
+    plt.ylabel('Features')
+    plt.savefig('feature_importance.png', dpi=300, bbox_inches='tight')
+    
+    if show :
+        plt.show()
+    else :
+        plt.close()
