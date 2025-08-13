@@ -52,7 +52,7 @@ class DataPreprocessor:
         self._convert_dtypes()
 
         
-        X = self.df[self.categorical_cols + self.numerical_cols]
+        X = self.df.drop(columns=[self.target_col])
         y = self.df[self.target_col]
         return X, y, self.categorical_cols, self.numerical_cols, self.target_col
 
